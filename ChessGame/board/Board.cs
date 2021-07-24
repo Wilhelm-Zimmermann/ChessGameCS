@@ -17,11 +17,39 @@
         {
             return Pieces[row, column];
         }
+        public Piece GetPiece(Position pos)
+        {
+            return Pieces[pos.Row, pos.Column];
+        }
 
+        public bool PieceExists(Position pos)
+        {
+            ValidatePos(pos);
+            return GetPiece(pos) != null;
+        }
         public void PutPiece(Piece p, Position pos)
         {
+            if (PieceExists(pos))
+            {
+                throw new BoardExeption("Error: There is a piece on this position.....");
+            }
             Pieces[pos.Row, pos.Column] = p;
             p.Position = pos;
+        }
+        public bool ValidPos(Position pos)
+        {
+            if(pos.Row < 0 || pos.Row >= Rows || pos.Column >= Columns || pos.Column < 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        public void ValidatePos(Position pos)
+        {
+            if (!ValidPos(pos))
+            {
+                throw new BoardExeption("Invalid Position");
+            }
         }
     }
 }
