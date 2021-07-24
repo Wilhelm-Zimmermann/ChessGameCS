@@ -8,7 +8,7 @@ namespace ChessGame
     {
         static void Main(string[] args)
         {
-            try
+            /*try
             {
 
                 Board board = new Board(8, 8);
@@ -23,7 +23,10 @@ namespace ChessGame
             }catch(BoardExeption err)
             {
                 Console.WriteLine(err.Message);
-            }
+            }*/
+
+            ChessPosition pos = new ChessPosition('c', 7);
+            Console.WriteLine(pos.ToPosition());
         }
     }
 }
