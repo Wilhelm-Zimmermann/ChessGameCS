@@ -2,17 +2,17 @@
 {
     class Position
     {
-        public int Line { get; set; }
+        public int Row { get; set; }
         public int Column { get; set; }
 
-        public Position(int line, int column)
+        public Position(int row, int column)
         {
-            Line = line;
+            Row = row;
             Column = column;
         }
         public override string ToString()
         {
-            return $"Line: {Line}\nColumn: {Column}";
+            return $"Row: {Row}\nColumn: {Column}";
         }
 
     }
