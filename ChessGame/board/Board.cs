@@ -36,6 +36,18 @@
             Pieces[pos.Row, pos.Column] = p;
             p.Position = pos;
         }
+
+        public Piece RemovePiece(Position pos)
+        {
+            if(GetPiece(pos) == null)
+            {
+                return null;
+            }
+            Piece aux = GetPiece(pos);
+            aux.Position = null;
+            Pieces[pos.Row, pos.Column] = null;
+            return aux;
+        }
         public bool ValidPos(Position pos)
         {
             if(pos.Row < 0 || pos.Row >= Rows || pos.Column >= Columns || pos.Column < 0)

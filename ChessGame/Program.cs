@@ -2,7 +2,7 @@
 using board;
 using chess;
 
-namespace ChessGame
+namespace Chess
 {
     class Program
     {
@@ -10,17 +10,18 @@ namespace ChessGame
         {
             try
             {
+                ChessGame game = new ChessGame();
+                while (!game.End)
+                {
+                    Console.Clear();
+                    Screen.ShowBoard(game.Board);
+                    Console.Write("Type origin pos: ");
+                    Position origin = Screen.ReadPosition().ToPosition();
+                    Console.Write("Type destin pos: ");
+                    Position destin = Screen.ReadPosition().ToPosition();
 
-                Board board = new Board(8, 8);
-
-                board.PutPiece(new King(board, Color.Black), new Position(0, 0));
-                board.PutPiece(new King(board, Color.Black), new Position(2, 1));
-                board.PutPiece(new Rook(board, Color.Black), new Position(1, 2));
-                board.PutPiece(new Rook(board, Color.Black), new Position(5, 3));
-                board.PutPiece(new Rook(board, Color.Black), new Position(0, 3));
-                board.PutPiece(new Rook(board, Color.White), new Position(0, 5));
-
-                Screen.ShowBoard(board);
+                    game.ExecuteMove(origin, destin);
+                }
             }catch(BoardExeption err)
             {
                 Console.WriteLine(err.Message);
