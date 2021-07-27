@@ -24,13 +24,13 @@ namespace board
             MoveQuantities++;
         }
 
-        /*public bool ExistMoves()
+        public bool ExistMoves()
         {
             bool[,] mat = PossibleMoves();
 
             for(int i = 0; i < Board.Rows; i++)
             {
-                for (int c = 0; i < Board.Columns; c++)
+                for (int c = 0; c < Board.Columns; c++)
                 {
                     if (mat[i, c])
                     {
@@ -39,7 +39,12 @@ namespace board
                 }
             }
             return false;
-        }*/
+        }
+
+        public bool CanMoveToPos(Position pos)
+        {
+            return PossibleMoves()[pos.Row, pos.Column];
+        }
         public abstract bool[,] PossibleMoves();
     }
 }

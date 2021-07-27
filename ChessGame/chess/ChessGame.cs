@@ -53,6 +53,19 @@ namespace chess
             {
                 throw new BoardExeption("Player is incorrect");
             }
+            if (!Board.GetPiece(pos).ExistMoves())
+            {
+                throw new BoardExeption("There is no moves to this piece");
+            }
+            
+        }
+
+        public void ValidateDestinPos(Position origin,Position destin)
+        {
+            if (!Board.GetPiece(origin).CanMoveToPos(destin))
+            {
+                throw new BoardExeption("Invalid move");
+            }
             
         }
         private void PutPieces()
@@ -61,6 +74,7 @@ namespace chess
             Board.PutPiece(new King(Board, Color.White), new ChessPosition('c',1).ToPosition());
             Board.PutPiece(new Rook(Board, Color.White), new ChessPosition('d',1).ToPosition());
             Board.PutPiece(new Rook(Board, Color.White), new ChessPosition('d',4).ToPosition());
+            Board.PutPiece(new Rook(Board, Color.Black), new ChessPosition('g',4).ToPosition());
 
         }
     }
