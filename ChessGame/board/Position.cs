@@ -10,8 +10,13 @@
             Row = row;
             Column = column;
         }
-        public override string ToString()
+
+        public void DefineValue(int row, int column)
         {
+            Row = row;
+            Column = column;
+        }
+        public override string ToString() { 
             return $"Row: {Row}\nColumn: {Column}";
         }
 

@@ -5,8 +5,8 @@ namespace chess
     class ChessGame
     {
         public Board Board { get; private set; }
-        private int Turn;
-        private Color Player;
+        public int Turn { get; private set; }
+        public Color Player { get; private set; }
         public bool End { get; private set; }
 
         public ChessGame()
@@ -17,13 +17,6 @@ namespace chess
             End = false;
             PutPieces();
         }
-        /*public ChessGame(Board board, int turn, Color player)
-        {
-            Board = board;
-            Turn = turn;
-            Player = player;
-        }*/
-
         public void ExecuteMove(Position origin, Position destin)
         {
             Piece p = Board.RemovePiece(origin);
@@ -31,10 +24,43 @@ namespace chess
             Piece capturedPiece = Board.RemovePiece(destin);
             Board.PutPiece(p, destin);
         }
+        public void RealizeMove(Position origin, Position destin)
+        {
+            ExecuteMove(origin, destin);
+            Turn++;
+            ChangePlayer();
+        }
 
+        private void ChangePlayer()
+        {
+            if(Player == Color.White)
+            {
+                Player = Color.Black;
+            }
+            else
+            {
+                Player = Color.White;
+            }
+        }
+
+        public void ValidateOriginPos(Position pos)
+        {
+            if(Board.GetPiece(pos) == null)
+            {
+                throw new BoardExeption("Piece doesnt exists");
+            }
+            if(Player != Board.GetPiece(pos).Color)
+            {
+                throw new BoardExeption("Player is incorrect");
+            }
+            
+        }
         private void PutPieces()
         {
-            Board.PutPiece(new King(Board, Color.Black), new ChessPosition('c', 1).ToPosition());
+
+            Board.PutPiece(new King(Board, Color.White), new ChessPosition('c',1).ToPosition());
+            Board.PutPiece(new Rook(Board, Color.White), new ChessPosition('d',1).ToPosition());
+            Board.PutPiece(new Rook(Board, Color.White), new ChessPosition('d',4).ToPosition());
 
         }
     }

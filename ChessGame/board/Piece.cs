@@ -4,14 +4,14 @@ using System.Text;
 
 namespace board
 {
-    class Piece
+    abstract class Piece
     {
         public Position Position { get; set; }
         public Color Color { get;protected set; }
         public int MoveQuantities { get;protected set; }
         public Board Board { get; protected set; }
 
-        public Piece(Color color, Board board)
+        public Piece(Board board,Color color)
         {
             Position = null;
             Color = color;
@@ -23,5 +23,23 @@ namespace board
         {
             MoveQuantities++;
         }
+
+        /*public bool ExistMoves()
+        {
+            bool[,] mat = PossibleMoves();
+
+            for(int i = 0; i < Board.Rows; i++)
+            {
+                for (int c = 0; i < Board.Columns; c++)
+                {
+                    if (mat[i, c])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }*/
+        public abstract bool[,] PossibleMoves();
     }
 }
