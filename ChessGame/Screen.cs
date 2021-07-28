@@ -1,11 +1,42 @@
 ﻿using board;
 using System;
 using chess;
+using System.Collections.Generic;
 
 namespace Chess
 {
     class Screen
     {
+        public static void ShowGame(ChessGame game,bool[,] possiblePos)
+        {
+            ShowBoard(game.Board,possiblePos);
+            Console.WriteLine();
+            ShowCapturedPieces(game);
+            Console.WriteLine();
+            Console.WriteLine("Turn: " + game.Turn);
+            Console.WriteLine();
+
+            Console.WriteLine($"Player '{game.Player}'");
+        }
+        public static void ShowCapturedPieces(ChessGame game)
+        {
+            Console.WriteLine("Captured Pieces");
+            Console.Write("White: ");
+            ShowPieces(game.AllCapturedPieces(Color.White));
+            Console.WriteLine();
+            Console.Write("Black: ");
+            ShowPieces(game.AllCapturedPieces(Color.Black));
+        }
+
+        public static void ShowPieces(List<Piece> pieces)
+        {
+            Console.Write("[");
+            foreach(Piece p in pieces)
+            {
+                Console.Write(p + " ");
+            }
+            Console.Write("]");
+        }
         public static void ShowBoard(Board board)
         {
             for (int i = 0; i < board.Rows; i++)
@@ -24,13 +55,13 @@ namespace Chess
         public static void ShowBoard(Board board, bool[,] posiblePos)
         {
             ConsoleColor originalBack = Console.BackgroundColor;
-            ConsoleColor background = ConsoleColor.Red;
+            ConsoleColor background = ConsoleColor.DarkBlue;
             for (int i = 0; i < board.Rows; i++)
             {
                 Console.Write(8 - i + " ");
                 for (int c = 0; c < board.Columns; c++)
                 {
-                    if(posiblePos[i,c])
+                    if (posiblePos[i, c])
                     {
                         Console.BackgroundColor = background;
                     }

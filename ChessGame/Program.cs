@@ -14,22 +14,17 @@ namespace Chess
                 try
                 {
                     Console.Clear();
-                    Screen.ShowBoard(game.Board);
-                    Console.WriteLine();
-
-                    Console.WriteLine("Turn: " + game.Turn);
-                    Console.WriteLine();
-
-                    Console.WriteLine($"Player '{game.Player}'");
+                    bool[,] posiblePos = new bool[8,8];
+                    Screen.ShowGame(game,posiblePos);
 
                     Console.Write("Type origin pos: ");
                     Position origin = Screen.ReadPosition().ToPosition();
                     game.ValidateOriginPos(origin);
-                    bool[,] posiblePos = game.Board.GetPiece(origin).PossibleMoves();
+                    posiblePos = game.Board.GetPiece(origin).PossibleMoves();
 
                     Console.Clear();
                     Console.WriteLine();
-                    Screen.ShowBoard(game.Board, posiblePos);
+                    Screen.ShowGame(game,posiblePos);
                     Console.WriteLine();
 
                     Console.Write("Type destin pos: ");
