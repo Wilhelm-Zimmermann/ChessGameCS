@@ -9,8 +9,9 @@ namespace chess
         public int Turn { get; private set; }
         public Color Player { get; private set; }
         public bool End { get; private set; }
-        private List<Piece> Pieces = new List<Piece>();
-        private List<Piece> CapturedPieces = new List<Piece>();
+        private HashSet<Piece> Pieces = new HashSet<Piece>();
+        private HashSet<Piece> CapturedPieces = new HashSet<Piece>();
+        public bool Xeque { get; private set; }
 
         public ChessGame()
         {
@@ -18,9 +19,10 @@ namespace chess
             Turn = 1;
             Player = Color.White;
             End = false;
+            Xeque = false;
             PutPieces();
         }
-        public void ExecuteMove(Position origin, Position destin)
+        public Piece ExecuteMove(Position origin, Position destin)
         {
             Piece p = Board.RemovePiece(origin);
             p.IncreaseMoveQuantity();
@@ -30,14 +32,48 @@ namespace chess
             {
                 CapturedPieces.Add(capturedPiece);
             }
+            return capturedPiece;
         }
         public void RealizeMove(Position origin, Position destin)
         {
-            ExecuteMove(origin, destin);
-            Turn++;
-            ChangePlayer();
-        }
+            Piece capturedPiece = ExecuteMove(origin, destin);
+            if (Xeq(Player))
+            {
+                UndoMove(origin, destin, capturedPiece);
+                throw new BoardExeption("You cannot put yourself in xeq");
+            }
+            if (Xeq(Enemy(Player)))
+            {
+                Xeque = true;
+            }
+            else
+            {
+                Xeque = false;
+            }
+            if (TestMate(Enemy(Player)))
+            {
+                End = true;
+            }
+            else
+            {
+                Turn++;
+                ChangePlayer();
+            }
 
+        }
+        public void UndoMove(Position origin, Position destin, Piece capturedPiece)
+        {
+            Piece p = Board.RemovePiece(destin);
+            p.DecreaseMoveQuantity();
+            if (capturedPiece != null)
+            {
+                Board.PutPiece(capturedPiece, destin);
+                CapturedPieces.Remove(capturedPiece);
+            }
+
+            Board.PutPiece(p, origin);
+
+        }
         private void ChangePlayer()
         {
             if (Player == Color.White)
@@ -75,9 +111,83 @@ namespace chess
             }
 
         }
-        public List<Piece> AllCapturedPieces(Color color)
+
+        private Piece King(Color color)
         {
-            List<Piece> captured = new List<Piece>();
+            foreach (Piece x in PiecesInGame(color))
+            {
+                if (x is King)
+                {
+                    return x;
+                }
+            }
+            return null;
+        }
+
+        public bool Xeq(Color color)
+        {
+            Piece king = King(color);
+            if (king == null)
+            {
+                End = true;
+            }
+            foreach (Piece p in PiecesInGame(Enemy(color)))
+            {
+                bool[,] mat = p.PossibleMoves();
+                if (mat[king.Position.Row, king.Position.Column])
+                {
+                    return true;
+                }
+
+            }
+            return false;
+        }
+
+        public bool TestMate(Color color)
+        {
+            if (!Xeq(color))
+            {
+                return false;
+            }
+            foreach (Piece piece in PiecesInGame(color))
+            {
+                bool[,] mat = piece.PossibleMoves();
+                for (int i = 0; i < Board.Rows; i++)
+                {
+                    for (int c = 0; c < Board.Columns; c++)
+                    {
+                        if (mat[i, c])
+                        {
+                            Position origin = piece.Position;
+                            Position destin = new Position(i, c);
+                            Piece capturedPiece = ExecuteMove(origin, destin);
+                            bool testXeq = Xeq(color);
+                            UndoMove(origin, destin, capturedPiece);
+                            if (!testXeq)
+                            {
+                                return false;
+                            }
+
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        private Color Enemy(Color color)
+        {
+            if (color == Color.White)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.White;
+            }
+        }
+        public HashSet<Piece> AllCapturedPieces(Color color)
+        {
+            HashSet<Piece> captured = new HashSet<Piece>();
             foreach (Piece piece in CapturedPieces)
             {
                 if (piece.Color == color)
@@ -87,9 +197,9 @@ namespace chess
             }
             return captured;
         }
-        public List<Piece> PiecesInGame(Color color)
+        public HashSet<Piece> PiecesInGame(Color color)
         {
-            List<Piece> piecesGame = new List<Piece>();
+            HashSet<Piece> piecesGame = new HashSet<Piece>();
             foreach (Piece piece in Pieces)
             {
                 if (piece.Color == color)
@@ -97,6 +207,7 @@ namespace chess
                     piecesGame.Add(piece);
                 }
             }
+            piecesGame.ExceptWith(AllCapturedPieces(color));
             return piecesGame;
         }
         public void PutNewPiece(char column, int row, Piece piece)
@@ -108,7 +219,11 @@ namespace chess
         {
 
             PutNewPiece('c', 1, new Rook(Board, Color.White));
-            PutNewPiece('c', 8, new Rook(Board, Color.Black));
+            PutNewPiece('d', 1, new King(Board, Color.White));
+            PutNewPiece('h', 7, new Rook(Board, Color.White));
+
+            PutNewPiece('a', 8, new King(Board, Color.Black));
+            PutNewPiece('b', 8, new Rook(Board, Color.Black));
 
         }
     }

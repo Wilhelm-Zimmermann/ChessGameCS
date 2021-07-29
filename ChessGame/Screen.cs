@@ -7,9 +7,9 @@ namespace Chess
 {
     class Screen
     {
-        public static void ShowGame(ChessGame game,bool[,] possiblePos)
+        public static void ShowGame(ChessGame game)
         {
-            ShowBoard(game.Board,possiblePos);
+            ShowBoard(game.Board);
             Console.WriteLine();
             ShowCapturedPieces(game);
             Console.WriteLine();
@@ -17,6 +17,16 @@ namespace Chess
             Console.WriteLine();
 
             Console.WriteLine($"Player '{game.Player}'");
+            if (game.Xeque)
+            {
+                Console.WriteLine("OOPS Your king is not safe");
+            }
+            if (game.End)
+            {
+                Console.WriteLine("Xeq Mate");
+                Console.WriteLine("Winner: "+game.Player);
+                Console.ReadLine();
+            }
         }
         public static void ShowCapturedPieces(ChessGame game)
         {
@@ -28,7 +38,7 @@ namespace Chess
             ShowPieces(game.AllCapturedPieces(Color.Black));
         }
 
-        public static void ShowPieces(List<Piece> pieces)
+        public static void ShowPieces(HashSet<Piece> pieces)
         {
             Console.Write("[");
             foreach(Piece p in pieces)

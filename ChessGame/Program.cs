@@ -14,17 +14,16 @@ namespace Chess
                 try
                 {
                     Console.Clear();
-                    bool[,] posiblePos = new bool[8,8];
-                    Screen.ShowGame(game,posiblePos);
+                    Screen.ShowGame(game);
 
                     Console.Write("Type origin pos: ");
                     Position origin = Screen.ReadPosition().ToPosition();
                     game.ValidateOriginPos(origin);
-                    posiblePos = game.Board.GetPiece(origin).PossibleMoves();
+                    bool[,] posiblePos = game.Board.GetPiece(origin).PossibleMoves();
 
                     Console.Clear();
                     Console.WriteLine();
-                    Screen.ShowGame(game,posiblePos);
+                    Screen.ShowBoard(game.Board,posiblePos);
                     Console.WriteLine();
 
                     Console.Write("Type destin pos: ");
@@ -39,6 +38,8 @@ namespace Chess
                     Console.ReadLine();
                 }
             }
+            Console.Clear();
+            Screen.ShowGame(game);
 
 
         }

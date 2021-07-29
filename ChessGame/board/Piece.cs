@@ -23,7 +23,10 @@ namespace board
         {
             MoveQuantities++;
         }
-
+        public void DecreaseMoveQuantity()
+        {
+            MoveQuantities--;
+        }
         public bool ExistMoves()
         {
             bool[,] mat = PossibleMoves();
