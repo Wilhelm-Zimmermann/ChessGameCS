@@ -1,12 +1,14 @@
 ﻿using board;
-
+using chess;
 namespace chess
 {
     class King : Piece
     {
-        public King(Board board, Color color) : base(board, color)
-        {
 
+        private ChessGame Game;
+        public King(Board board, Color color,ChessGame game) : base(board, color)
+        {
+            Game = game;
         }
         public override string ToString()
         {
@@ -18,6 +20,13 @@ namespace chess
             Piece p = Board.GetPiece(pos);
             return p == null || p.Color != Color;
         }
+
+        private bool TestRookToRoque(Position pos)
+        {
+            Piece piece = Board.GetPiece(pos);
+            return piece != null && piece is Rook && piece.Color == Color && piece.MoveQuantities == 0;
+        }
+        
         public override bool[,] PossibleMoves()
         {
             bool[,] mat = new bool[Board.Rows, Board.Columns];
@@ -69,6 +78,32 @@ namespace chess
             if (Board.ValidPos(pos) && CanMove(pos))
             {
                 mat[pos.Row, pos.Column] = true;
+            }
+
+            // # Roque
+            if(MoveQuantities == 0 && !Game.Xeque)
+            {
+                // # Little Roque
+                Position rookPos = new Position(Position.Row, Position.Column + 3);
+                if (TestRookToRoque(rookPos)) {
+                    Position p1 = new Position(Position.Row, Position.Column + 1);
+                    Position p2 = new Position(Position.Row, Position.Column + 2);
+                    if(Board.GetPiece(p1) == null && Board.GetPiece(p2) == null)
+                    {
+                        mat[Position.Row, Position.Column +2] = true;
+                    }
+                }
+                Position rookPos2 = new Position(Position.Row, Position.Column - 4);
+                if (TestRookToRoque(rookPos2))
+                {
+                    Position p1 = new Position(Position.Row, Position.Column - 1);
+                    Position p2 = new Position(Position.Row, Position.Column - 2);
+                    Position p3 = new Position(Position.Row, Position.Column - 3);
+                    if (Board.GetPiece(p1) == null && Board.GetPiece(p2) == null && Board.GetPiece(p3) == null)
+                    {
+                        mat[Position.Row, Position.Column - 2] = true;
+                    }
+                }
             }
             return mat;
         }
