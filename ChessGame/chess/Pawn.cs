@@ -1,9 +1,14 @@
 ﻿using board;
+using chess;
 namespace chess
 {
     class Pawn : Piece
     {
-        public Pawn(Board board, Color color) : base(board, color) { }
+        private ChessGame Game;
+        public Pawn(Board board, Color color, ChessGame game) : base(board, color)
+        {
+            Game = game;
+        }
 
         public override string ToString()
         {
@@ -39,15 +44,29 @@ namespace chess
                 {
                     mat[pos.Row, pos.Column] = true;
                 }
-                pos.DefineValue(Position.Row - 1, Position.Column -1);
+                pos.DefineValue(Position.Row - 1, Position.Column - 1);
                 if (Board.ValidPos(pos) && HasEnemy(pos))
                 {
                     mat[pos.Row, pos.Column] = true;
                 }
-                pos.DefineValue(Position.Row - 1, Position.Column +1);
+                pos.DefineValue(Position.Row - 1, Position.Column + 1);
                 if (Board.ValidPos(pos) && HasEnemy(pos))
                 {
                     mat[pos.Row, pos.Column] = true;
+                }
+                // # En passant
+                if (Position.Row == 3)
+                {
+                    Position left = new Position(Position.Row, Position.Column - 1);
+                    if (Board.ValidPos(left) && HasEnemy(left) && Board.GetPiece(left) == Game.EnPassant)
+                    {
+                        mat[left.Row - 1, left.Column] = true;
+                    }
+                    Position right = new Position(Position.Row, Position.Column + 1);
+                    if (Board.ValidPos(right) && HasEnemy(right) && Board.GetPiece(right) == Game.EnPassant)
+                    {
+                        mat[right.Row - 1, right.Column] = true;
+                    }
                 }
             }
             else
@@ -59,21 +78,36 @@ namespace chess
                 }
                 pos.DefineValue(Position.Row + 2, Position.Column);
                 if (Board.ValidPos(pos) && Free(pos) && MoveQuantities == 0)
-                {       
+                {
                     mat[pos.Row, pos.Column] = true;
                 }
                 pos.DefineValue(Position.Row + 1, Position.Column + 1);
-                if (Board.ValidPos(pos) &&  HasEnemy(pos))
+                if (Board.ValidPos(pos) && HasEnemy(pos))
                 {
                     mat[pos.Row, pos.Column] = true;
                 }
                 pos.DefineValue(Position.Row + 1, Position.Column - 1);
-                if (Board.ValidPos(pos) &&  HasEnemy(pos))
+                if (Board.ValidPos(pos) && HasEnemy(pos))
                 {
                     mat[pos.Row, pos.Column] = true;
                 }
+
+                if (Position.Row == 4)
+                {
+                    Position left = new Position(Position.Row, Position.Column - 1);
+                    if (Board.ValidPos(left) && HasEnemy(left) && Board.GetPiece(left) == Game.EnPassant)
+                    {
+                        mat[left.Row + 1, left.Column] = true;
+                    }
+                    Position right = new Position(Position.Row, Position.Column + 1);
+                    if (Board.ValidPos(right) && HasEnemy(right) && Board.GetPiece(right) == Game.EnPassant)
+                    {
+                        mat[right.Row + 1, right.Column] = true;
+                    }
+                }
+
             }
-            return mat;     
+            return mat;
         }
     }
 }
